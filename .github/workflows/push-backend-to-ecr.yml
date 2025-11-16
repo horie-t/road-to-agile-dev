@@ -1,0 +1,55 @@
+name: Push backend image to ECR (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Docker image tag to push"
+        required: false
+        default: "latest"
+
+permissions:
+  id-token: write   # for OIDC to assume AWS role
+  contents: read
+
+env:
+  AWS_REGION: us-west-2
+  ECR_IMAGE_URI: 269376826173.dkr.ecr.us-west-2.amazonaws.com/todo-manager-dev-backend
+
+jobs:
+  push:
+    name: Build and push backend image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+            context: ./backend
+            push: true
+            tags: |
+              ${{ env.ECR_IMAGE_URI }}:${{ inputs.image_tag }}
+            provenance: false
+
+      - name: Output image URI
+        run: |
+          echo "Pushed: ${ECR_IMAGE_URI}:${{ inputs.image_tag }}"
+
+# Notes:
+# - Set repository secret AWS_ROLE_TO_ASSUME with an IAM role ARN in account 269376826173 that has ECR push permissions.
+# - The ECR repository must exist: 269376826173.dkr.ecr.us-west-2.amazonaws.com/todo-manager-dev-backend
