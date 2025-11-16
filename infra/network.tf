@@ -88,3 +88,27 @@ resource "aws_security_group" "ecs_service" {
 
   tags = merge(local.tags, { Name = "${local.name_prefix}-ecs-sg" })
 }
+
+# Frontend ECS Service Security Group (port 80)
+resource "aws_security_group" "ecs_frontend" {
+  name        = "${local.name_prefix}-ecs-frontend-sg"
+  description = "ECS frontend service security group"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb.id]
+    description     = "Allow ALB to reach frontend ECS tasks"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(local.tags, { Name = "${local.name_prefix}-ecs-frontend-sg" })
+}

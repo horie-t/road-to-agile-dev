@@ -82,7 +82,10 @@ data "aws_iam_policy_document" "gha_ecr_push" {
       "ecr:GetDownloadUrlForLayer",
       "ecr:ListImages"
     ]
-    resources = [aws_ecr_repository.app.arn]
+    resources = [
+      aws_ecr_repository.app.arn,
+      aws_ecr_repository.frontend.arn
+    ]
   }
 }
 

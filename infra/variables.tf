@@ -70,6 +70,25 @@ variable "tags" {
   default     = {}
 }
 
+# Frontend settings
+variable "frontend_image_tag" {
+  description = "Docker image tag to deploy for frontend"
+  type        = string
+  default     = "latest"
+}
+
+variable "frontend_desired_count" {
+  description = "ECS service desired task count for frontend"
+  type        = number
+  default     = 1
+}
+
+variable "frontend_health_check_path" {
+  description = "ALB target group health check path for frontend"
+  type        = string
+  default     = "/"
+}
+
 # GitHub Actions OIDC / IAM Role settings
 variable "enable_github_oidc" {
   description = "Enable creation of GitHub OIDC provider and IAM role for Actions to push to ECR"
