@@ -69,3 +69,23 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+# GitHub Actions OIDC / IAM Role settings
+variable "enable_github_oidc" {
+  description = "Enable creation of GitHub OIDC provider and IAM role for Actions to push to ECR"
+  type        = bool
+  default     = true
+}
+
+variable "github_oidc_subjects" {
+  description = <<EOT
+List of allowed GitHub OIDC subjects (StringLike patterns) that can assume the role.
+Examples:
+  - "repo:OWNER/REPO:ref:refs/heads/main"           # only main branch
+  - "repo:OWNER/REPO:environment:prod"              # GitHub Environments
+  - "repo:OWNER/REPO:*"                              # any ref in the repository
+EOT
+  type    = list(string)
+  # NOTE: Replace OWNER/REPO accordingly. This placeholder blocks real use until you set it.
+  default = ["repo:OWNER/REPO:*"]
+}

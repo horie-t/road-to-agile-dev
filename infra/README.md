@@ -7,6 +7,7 @@ Terraform で AWS ECS Fargate へ backend をデプロイするためのコー�
 - ECR リポジトリ
 - CloudWatch Logs
 - ECS Cluster, Task Definition, Service（Fargate）
+ - GitHub Actions 用 OIDC Provider と ECR Push 権限の IAM ロール（任意/有効化デフォルト）
 
 前提:
 - AWS 認証情報が設定済み（例: AWS_PROFILE もしくは環境変数）
@@ -34,5 +35,28 @@ Terraform で AWS ECS Fargate へ backend をデプロイするためのコー�
 備考:
 - デフォルトでは 2 つのパブリックサブネットに Fargate タスクを配置し、ALB 経由で 80 番ポートから到達可能です。
 - ターゲットグループのヘルスチェックは 200–499 を成功とみなすため、ルートパス（/）が 404 を返す場合でも Unhealthy になりません。
+
+## GitHub Actions からの ECR Push 用 IAM ロール
+
+本モジュールは GitHub OIDC Provider と、GitHub Actions から Assume できる IAM ロールを作成できます（デフォルトで有効）。
+
+設定手順:
+1) 対象の GitHub リポジトリ/ブランチなどに合わせて、`github_oidc_subjects` を設定してください。
+   - 例（main ブランチのみ許可）:
+     -var 'github_oidc_subjects=["repo:OWNER/REPO:ref:refs/heads/main"]'
+   - 例（該当リポジトリの全ての ref を許可）:
+     -var 'github_oidc_subjects=["repo:OWNER/REPO:*"]'
+
+2) 適用
+   - terraform apply -auto-approve -var 'github_oidc_subjects=["repo:OWNER/REPO:*"]'
+
+3) 出力確認（ロール ARN）
+   - terraform output github_actions_role_arn
+
+4) GitHub リポジトリの Secrets に `AWS_ROLE_TO_ASSUME` を登録し、上記 ARN を設定してください。
+
+補足:
+- enable_github_oidc=false を指定すると、OIDC/IAM ロールの作成を無効化できます。
+- 付与権限は ECR の push に必要な最小限（対象 ECR リポジトリに限定）です。
 
 出力例: ecr_repository_url, alb_dns_name, ecs_cluster_name, ecs_service_name
