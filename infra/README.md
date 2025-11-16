@@ -22,7 +22,7 @@ Terraform で AWS ECS Fargate へ backend をデプロイするためのコー�
    - terraform output alb_dns_name
 
 3) ECR にログインしてイメージを push
-   - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-1.amazonaws.com
+   - aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.us-west-2.amazonaws.com
    - IMAGE_URI=$(terraform output -raw ecr_repository_url)
    - docker build -t backend ../backend
    - docker tag backend:latest ${IMAGE_URI}:latest

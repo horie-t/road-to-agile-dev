@@ -6,6 +6,12 @@ terraform {
       version = ">= 5.0"
     }
   }
+  backend "s3" {
+    region  = "us-west-2"
+    encrypt = false
+    bucket = "terraform.t-horie.com"
+    key = "todo_manager/terraform.tfstate"
+  }
 }
 
 provider "aws" {
