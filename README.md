@@ -57,9 +57,36 @@ cd backend
 
 dev環境では `latest` タグが使用されます。
 
+### 手動でのアーティファクトの管理
+
+以下の手順でDockerイメージを作成してECRにpushしてください。(latestタグを付与する場合)
+
+#### フロントエンド
+
+```bash
+cd frontend
+aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-west-2.amazonaws.com
+docker build -t todo-manager-dev-backend .
+docker tag todo-manager-dev-backend:latest 123456789012.dkr.ecr.us-west-2.amazonaws.com/todo-manager-dev-backend:latest
+docker push 123456789012.dkr.ecr.us-west-2.amazonaws.com/todo-manager-dev-backend:latest
+```
+
+#### バックエンド
+
+```bash
+cd backend
+aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-west-2.amazonaws.com
+docker build -t todo-manager-dev-frontend .
+docker tag todo-manager-dev-frontend:latest 123456789012.dkr.ecr.us-west-2.amazonaws.com/todo-manager-dev-frontend:latest
+docker push 123456789012.dkr.ecr.us-west-2.amazonaws.com/todo-manager-dev-frontend:latest
+```
+
 ## ブランチ管理
 
 ブランチのフローは以下の図の通りです。
 
 ![](./docs/images/branch-flow.png)
 
+## その他ドキュメント
+
+設計資料は[docs](./docs)ディレクトリを参照してください。要件は[Jira](https://jira.expample.com/)を参照してください。
