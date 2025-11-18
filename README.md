@@ -38,7 +38,7 @@ curl http://localhost:8080/actuator/health
 以下のコマンドを実行してください。
 ```bash
 cd frontend
-npm install & npm test
+npm run test:run
 ```
 
 ### バックエンドのテスト
