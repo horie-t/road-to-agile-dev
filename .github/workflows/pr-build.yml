@@ -1,0 +1,65 @@
+name: PR build check (frontend & backend)
+
+on:
+  pull_request:
+    # PRのターゲットブランチが "develop/" で始まる場合のみ実行
+    branches:
+      - 'develop/**'
+      - 'main'
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+# Prevent redundant runs for the same PR when new commits arrive
+concurrency:
+  group: pr-build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-build:
+    name: Build frontend
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - name: Checkout (PR merge ref)
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+
+  backend-build:
+    name: Build backend
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - name: Checkout (PR merge ref)
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+
+      - name: Build with Maven (skip tests)
+        working-directory: backend
+        run: mvn -B -DskipTests package
