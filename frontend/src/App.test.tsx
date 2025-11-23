@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import React from 'react'
-import { createRoot, Root } from 'react-dom/client'
+import { createRoot } from 'react-dom/client'
+import type { Root } from 'react-dom/client'
 import { act } from 'react-dom/test-utils'
 import App from './App'
 

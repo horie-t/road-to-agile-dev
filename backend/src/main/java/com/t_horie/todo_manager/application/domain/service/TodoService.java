@@ -1,5 +1,7 @@
-package com.t_horie.todo_manager.todo;
+package com.t_horie.todo_manager.application.domain.service;
 
+import com.t_horie.todo_manager.adapter.in.web.Todo;
+import com.t_horie.todo_manager.adapter.in.web.TodoRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
