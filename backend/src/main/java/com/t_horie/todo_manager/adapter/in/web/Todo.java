@@ -1,4 +1,4 @@
-package com.t_horie.todo_manager.todo;
+package com.t_horie.todo_manager.adapter.in.web;
 
 import java.time.Instant;
 
