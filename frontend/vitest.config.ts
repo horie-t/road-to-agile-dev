@@ -1,0 +1,15 @@
+import { defineConfig, configDefaults } from 'vitest/config'
+
+// Vitest configuration
+export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: [],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html'],
+    },
+    exclude: [...configDefaults.exclude],
+  },
+})
