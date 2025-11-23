@@ -1,5 +1,6 @@
-package com.t_horie.todo_manager.todo;
+package com.t_horie.todo_manager.adapter.in.web;
 
+import com.t_horie.todo_manager.application.domain.service.TodoService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
